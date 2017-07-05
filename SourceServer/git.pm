@@ -8,6 +8,7 @@
 # http://www.imaginaryrealities.com/post/2009/05/03/Indexing-source-code-in-Git-with-Source-Server.aspx
 #
 # With modifications by Jonathan Oliver (http://jonathan-oliver.blogspot.com)
+# Forked 2017 by Per Hasselström to https://github.com/Perolus/SourceServer-GitExtensions
 # ------------------------------------------------------------------------
 package GIT;
 
@@ -130,7 +131,7 @@ sub GetRepositoryId {
 	return(GetSha1OfFirstCommand());
 }
 sub GetSha1OfFirstCommand {
-	my $result = `git rev-list --reverse master`;
+	my $result = `git rev-list --reverse --max-parents=0 HEAD`;
 	my @ids = split(/\n/, $result);
 	return($ids[0]);
 }
