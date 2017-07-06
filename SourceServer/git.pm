@@ -120,11 +120,13 @@ sub SourceStreamVariables {
 	
 	my $repositoryId  = GetRepositoryId();
 	my $originNode = GetOriginRepository();
+	my $gitBranch = GetGitBranch();
 	
 	push(@stream, "GIT_REPO_ID=$repositoryId");
 	push(@stream, "GIT_ORIGIN_NODE=$originNode");
+	push(@stream, "GIT_BRANCH=$gitBranch");
 	push(@stream, "GIT_EXTRACT_TARGET=%targ%\\%GIT_REPO_ID%\\%var2%\\%fnfile%(%var1%)");
-    push(@stream, "GIT_EXTRACT_CMD=gitcontents.bat \"%GIT_ORIGIN_NODE%\" \"%targ%\\%GIT_REPO_ID%\\.localRepo\" %var2% \"%git_extract_target%\"");
+    push(@stream, "GIT_EXTRACT_CMD=gitcontents.bat \"%GIT_ORIGIN_NODE%\" \"%GIT_BRANCH%\" \"%targ%\\%GIT_REPO_ID%\\.localRepo\" %var2% \"%git_extract_target%\"");
     return (@stream);
 }
 sub GetRepositoryId {
@@ -147,6 +149,11 @@ sub GetOriginRepository {
 sub GetRemoteRepositories {
 	my $remoteRepositories = `git --no-pager remote -v`;
 	return(split(/\n/, $remoteRepositories));
+}
+sub GetGitBranch {
+	my $returnBranch = `git rev-parse --abbrev-ref HEAD`;
+	$returnBranch = RemoveTrailingLineBreakCharacter($returnBranch);
+	return($returnBranch);
 }
 
 sub ExecuteCommand {
